@@ -1,8 +1,6 @@
 CFLAGS=-I/opt/local/include --std=c99
 LDFLAGS=-L/opt/local/lib -lportaudio
 
-all: main list
+all: vu-meter
 
-list: list.c
-
-main: main.c
+vu-meter: main.c vu-meter.c vu-meter.h
