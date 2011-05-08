@@ -1,0 +1,4 @@
+FX2LIBDIR   =$(HOME)/dev/com.github/trygvis/fx2lib
+PATH       :=$(HOME)/src/cycfx2prog-0.47:$(PATH)
+AS          =sdas8051
+CC          =$(HOME)/opt/sdcc-20100821-5938/bin/sdcc
