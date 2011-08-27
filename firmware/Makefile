@@ -3,7 +3,7 @@ CPP=sdcpp
 CPP=cpp
 # Include "AS=sdas8051" in your Makefile.local if this is not found
 AS=asx8051
-include Makefile.local
+-include Makefile.local
 
 SDCCFLAGS=-mmcs51 \
           --code-size 0x3c00 \
@@ -21,26 +21,26 @@ else
 OPT_D=-d=$(DEVICE)
 endif
 
-firmwares=triac
+firmwares=vu-meter
 
 #
 # Targets
 #
 
-TESTS=triac-test
+TESTS=vu-meter-test
 
 all: target $(patsubst %,target/%.rel,$(firmwares)) $(patsubst %,target/%.ihx,$(firmwares)) $(TESTS)
-triac.c: triac.h
-triac-control.c: triac.h
+vu-meter.c: triac-control.h
+triac-control.c: triac-control.h
 
-triac-test: triac-test.c triac-control.c triac.h
-	gcc -DDEBUG -o triac-test triac-test.c triac-control.c
+vu-meter-test: vu-meter-test.c triac-control.c triac-control.h
+	gcc -DDEBUG -o vu-meter-test vu-meter-test.c triac-control.c
 
 #
 # Dependencies
 #
 
-target/triac.ihx: target/triac-control.rel target/triac-descriptor.rel target/triac-dscr.rel 
+target/vu-meter.ihx: target/triac-control.rel target/vu-meter-descriptor.rel target/vu-meter-dscr.rel 
 
 #
 # Common targets

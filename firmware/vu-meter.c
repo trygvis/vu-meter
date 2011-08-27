@@ -7,7 +7,7 @@
 #include <autovector.h>
 #include <setupdat.h>
 
-#include "triac.h"
+#include "triac-control.h"
 
 #define SYNCDELAY() SYNCDELAY4;
 

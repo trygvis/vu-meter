@@ -1,5 +1,5 @@
-#ifndef TRIAC_H
-#define TRIAC_H
+#ifndef TRIAC_CONTROL_H
+#define TRIAC_CONTROL_H
 
 #ifdef DEBUG
 typedef int BYTE;

@@ -1,4 +1,4 @@
-#include "triac.h"
+#include "triac-control.h"
 
 #ifdef DEBUG
 #include <stdio.h>
