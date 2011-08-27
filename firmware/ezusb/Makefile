@@ -2,7 +2,7 @@ CC=sdcc
 CPP=sdcpp
 CPP=cpp
 # Include "AS=sdas8051" in your Makefile.local if this is not found
-AS?=asx8051
+AS=asx8051
 include Makefile.local
 
 SDCCFLAGS=-mmcs51 \
@@ -70,7 +70,7 @@ target/%.rel: %.c
 
 target/%.rel: %.asm
 	@echo AS $<
-	@$(AS) -logsp $<
+	$(AS) -logsp $<
 	@mkdir -p target
 	@mv *.rel target/
 	@mv *.lst target/

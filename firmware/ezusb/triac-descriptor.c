@@ -1,5 +1,5 @@
 #include <setupdat.h>
-#include "descriptors.h"
+#include <descriptors.h>
 
 #pragma constseg DSCR_AREA
 

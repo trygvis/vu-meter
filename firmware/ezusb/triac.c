@@ -1,6 +1,7 @@
 #include <fx2regs.h>
 #include <fx2macros.h>
 #include <fx2ints.h>
+#include <fx2extra.h>
 #include <eputils.h>
 #include <delay.h>
 #include <autovector.h>
@@ -13,73 +14,6 @@
 volatile __bit dosuspend=FALSE;
 volatile __bit got_sud;
 volatile WORD counter;
-
-#include "fx2bits.h"
-#include "fx2extra.h"
-#include "fx2timer.h"
-
-BYTE buttons[16];
-BYTE sample_counter = 0;
-
-void key_changed(BYTE new_state);
-
-static BYTE current_button_states;
-
-/**
- * This does 16 samples, checks if they're all stable and if they are calls
- * key_pressed().
- *
- * TODO: Let this be a running sample instead of reading 16, checking and starting over
- */
-void timer0_callback() {
-    BYTE first, i;
-    __bit all_samples_equal = 1;
-
-    buttons[sample_counter++] = ~IOA;
-
-    if(sample_counter == sizeof(buttons)) {
-        sample_counter = 0;
-
-        // This is not very efficient
-        first = buttons[0];
-        for(i = 1; i < sizeof(buttons); i++) {
-            if(buttons[i] != first) {
-                all_samples_equal = 0;
-                break;
-            }
-        }
-
-        if(all_samples_equal) {
-            key_changed(first);
-        }
-    }
-}
-
-void key_changed(BYTE new_state) {
-    BYTE i = 0, j = 0;
-    BYTE bm, current, new;
-
-    if(current_button_states == new_state) {
-        return;
-    }
-
-    for(i = 0; i < 8; i++) {
-        bm = 1 << i;
-        current = (current_button_states & bm) > 0;
-        new = (new_state & bm) > 0;
-
-        if(new != current) {
-            EP8FIFOBUF[j++] = new ? 'D' : 'U';
-            EP8FIFOBUF[j++] = '0' + i;
-        }
-    }
-
-    current_button_states = new_state;
-
-    EP8BCH = 0;
-    EP8BCL = j;
-    SYNCDELAY();
-}
 
 void init_usb() {
     REVCTL=0; // not using advanced endpoint controls
@@ -144,8 +78,6 @@ void main(void)
     init_port_b();
     init_port_d();
 
-//    fx2_setup_timer0(1000); // fire every ms
-
     // Arm EP2 to tell the host that we're ready to receive
     EP2BCL = 0x80;
     SYNCDELAY();
@@ -164,6 +96,8 @@ void main(void)
     IOB = 0xff;
 
     shift_out_byte(0x00);
+    // Start with lights on
+    shift_out_byte(0xff);
 
     // loop endlessly
     while(1) {
@@ -236,14 +170,6 @@ BOOL handle_set_configuration(BYTE cfg) {
 void handle_reset_ep(BYTE ep) {
     // silence warning
     ep = ep;
-}
-
-// -----------------------------------------------------------------------
-// Timer
-// -----------------------------------------------------------------------
-
-void timer0_isr() __interrupt TF0_ISR {
-    fx2_timer0_isr();
 }
 
 // -----------------------------------------------------------------------
