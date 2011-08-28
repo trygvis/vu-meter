@@ -1,5 +1,5 @@
 LDFLAGS=$(shell pkg-config --libs libusb-1.0)
-CFLAGS=$(shell pkg-config --cflags libusb-1.0) --std=c99 -g -MD
+CFLAGS=$(shell pkg-config --cflags libusb-1.0) --std=c99 -g -MD -D_XOPEN_SOURCE=600
 CC=gcc
 
 BINS=set-light animate-light set-all list-lights
