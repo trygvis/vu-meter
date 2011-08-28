@@ -1,32 +1,43 @@
 #include "makers-party.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
 
-static struct makers_party* makers_party;
+static struct makers_party* mp;
 
 void usage(char* argv[]) {
-	fprintf(stderr, "Usage: %s [on|off]\n", argv[0]);
+	fprintf(stderr, "Usage: %s [light] [on|off]\n", argv[0]);
 }
 
 int main(int argc, char* argv[]) {
-	makers_party_alloc(&makers_party);
-
-	if(argc != 2) {
+	if(argc != 3) {
 		usage(argv);
 		return EXIT_FAILURE;
 	}
 
-	bool on = strcmp("on", argv[1]) == 0;
-	printf("on=%s\n", on ? "true" : "false");
+	int light = atoi(argv[1]);
 
-	for(int i = 0; i < 8; i++) {
-		makers_party_set_light(makers_party, i, on);
+	if(light == 0) {
+		usage(argv);
+		return EXIT_FAILURE;
 	}
 
-	makers_party_dealloc(makers_party);
+	bool on = strcmp("on", argv[2]) == 0;
+
+	makers_party_alloc(&mp);
+
+	struct light_set_descriptor* light_set = makers_get_light_set_descriptor(mp);
+
+	if(light > light_set->count) {
+		fprintf(stderr, "Light index out of range: %d, max=%d\n", light, light_set->count);
+		return EXIT_FAILURE;
+	}
+
+	makers_party_set_light(mp, light - 1, on);
+
+	makers_party_dealloc(mp);
 
 	return EXIT_SUCCESS;
 }
