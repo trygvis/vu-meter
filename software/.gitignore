@@ -1,3 +1,6 @@
 set-all
 set-light
 animate-light
+list-lights
+*.o
+*.d

@@ -12,16 +12,11 @@ void usage(char* argv[]) {
 int main(int argc, char* argv[]) {
 	makers_party_alloc();
 
-	if(argc != 2) {
-		usage(argv);
-		return EXIT_FAILURE;
-	}
+	const struct light_set_descriptor* descriptor = makers_get_light_set_descriptor();
 
-	bool on = strcmp("on", argv[1]) == 0;
-	printf("on=%s\n", on ? "true" : "false");
-
-	for(int i = 0; i < 8; i++) {
-		makers_party_set_light(i, on);
+	printf("Number of lights: %d\n", descriptor->count);
+	for(int i = 0; i < descriptor->count; i++) {
+		printf(" %d: dimmable=%s\n", i, descriptor->descriptors[i].dimmable ? "yes" : "no");
 	}
 
 	makers_party_dealloc();

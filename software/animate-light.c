@@ -46,12 +46,12 @@ int main(int argc, char* argv[]) {
     set_light(false, 7);
     for(int i = 0; i < 8; i++) {
         set_light(true, i);
-        usleep(500 * 1000);
+//        usleep(500 * 1000);
         set_light(false, i);
     }
     for(int i = 7; i >= 0; i--) {
         set_light(true, i);
-        usleep(500 * 1000);
+//        usleep(500 * 1000);
         set_light(false, i);
     }
     /*
