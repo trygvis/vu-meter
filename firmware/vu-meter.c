@@ -86,18 +86,7 @@ void main(void)
 
     EA=1;
 
-    /*
-    IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00;
-    IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00;
-    IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00;
-    IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00; IOB = 0xff; IOB = 0x00;
-    */
-
     IOB = 0xff;
-
-    shift_out_byte(0x00);
-    // Start with lights on
-    shift_out_byte(0xff);
 
     // loop endlessly
     while(1) {
@@ -126,10 +115,47 @@ void main(void)
 //
 // -----------------------------------------------------------------------
 
+/*
 BOOL handle_vendorcommand(BYTE cmd) {
-    // silence warning
     cmd = cmd;
     return FALSE;
+}
+*/
+
+BOOL handle_vendorcommand(BYTE bRequest) {
+    BYTE bmRequestType = SETUPDAT[0];
+    struct light_set_descriptor* light_set_descriptor;
+    struct light_descriptor* light_descriptors;
+
+    SUDPTRCTL = 1;
+
+    shift_out_byte(0x00);
+    if(bmRequestType == 0xc0 && bRequest == 0x21) {
+        light_set_descriptor = triac_get_light_set_descriptor();
+        EP0BCH = 0;
+        EP0BCL = sizeof(struct light_set_descriptor);
+        SUDPTRCTL = 0;
+        SUDPTRH = (BYTE)((((unsigned short)light_set_descriptor) >> 8) & 0xff);
+        SUDPTRL = (BYTE)(((unsigned short)light_set_descriptor) & 0xff);
+        shift_out_byte(0xf0);
+    }
+    else if(bmRequestType == 0xc0 && bRequest == 0x22) {
+        light_set_descriptor = triac_get_light_set_descriptor();
+        light_descriptors = triac_get_light_descriptors();
+        EP0BCH = 0;
+        EP0BCL = sizeof(struct light_descriptor) * light_set_descriptor->count;
+        SUDPTRCTL = 0;
+        SUDPTRH = (BYTE)((((unsigned short)light_descriptors) >> 8) & 0xff);
+        SUDPTRL = (BYTE)(((unsigned short)light_descriptors) & 0xff);
+        shift_out_byte(0xf0);
+    }
+    else {
+        shift_out_byte(0x0f);
+        return FALSE;
+    }
+
+    EP0CS |= bmHSNAK;
+    return TRUE;
 }
 
 BOOL handle_get_interface(BYTE ifc, BYTE* alt_ifc) {

@@ -27,11 +27,13 @@ firmwares=vu-meter
 # Targets
 #
 
-TESTS=vu-meter-test
+TESTS=
+# vu-meter-test
 
 all: target $(patsubst %,target/%.rel,$(firmwares)) $(patsubst %,target/%.ihx,$(firmwares)) $(TESTS)
 vu-meter.c: triac-control.h
 triac-control.c: triac-control.h
+triac-descriptor.c: triac-control.h
 
 vu-meter-test: vu-meter-test.c triac-control.c triac-control.h
 	gcc -DDEBUG -o vu-meter-test vu-meter-test.c triac-control.c
@@ -40,7 +42,7 @@ vu-meter-test: vu-meter-test.c triac-control.c triac-control.h
 # Dependencies
 #
 
-target/vu-meter.ihx: target/triac-control.rel target/vu-meter-descriptor.rel target/vu-meter-dscr.rel 
+target/vu-meter.ihx: target/triac-control.rel target/triac-descriptor.rel target/vu-meter-descriptor.rel target/vu-meter-dscr.rel 
 
 #
 # Common targets
