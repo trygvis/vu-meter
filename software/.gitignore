@@ -1,6 +1,7 @@
+animate-light
+cylon
+list-lights
 set-all
 set-light
-animate-light
-list-lights
 *.o
 *.d

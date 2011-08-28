@@ -1,10 +1,8 @@
-#include <libusb.h>
+#include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
 #include <unistd.h>
-#include <time.h>
 
 #include "makers-party.h"
 
