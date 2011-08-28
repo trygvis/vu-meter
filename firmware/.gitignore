@@ -1,0 +1,3 @@
+*.map
+target
+Makefile.local

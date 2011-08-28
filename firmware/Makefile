@@ -1,3 +1,5 @@
+LIGHT_REGISTER_COUNT=1
+
 CC=sdcc
 CPP=sdcpp
 CPP=cpp
@@ -9,7 +11,8 @@ SDCCFLAGS=-mmcs51 \
           --code-size 0x3c00 \
           --xram-size 0x0200 \
           --xram-loc 0x3c00 \
-          -I$(FX2LIBDIR)/include
+          -I$(FX2LIBDIR)/include \
+          -DLIGHT_REGISTER_COUNT=$(LIGHT_REGISTER_COUNT)
 
 ifeq ($(FX2LIBDIR),)
 $(error FX2LIBDIR has to be defined in Makefile.local)
@@ -49,7 +52,6 @@ target/vu-meter.ihx: target/triac-control.rel target/triac-descriptor.rel target
 #
 
 clean:
-	@echo Cleaning...
 	@rm -rf target
 
 target:

@@ -9,12 +9,12 @@
 #pragma constseg DSCR_AREA
 
 __code struct light_set_descriptor light_set_descriptor = {
-    8
+    LIGHT_COUNT
 };
 
 __code BYTE padding = 1;
 
-__code struct light_descriptor light_descriptors[8] = {
+__code struct light_descriptor light_descriptors[LIGHT_COUNT] = {
     { FALSE },
     { FALSE },
     { FALSE },

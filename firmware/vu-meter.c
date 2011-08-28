@@ -76,7 +76,7 @@ void main(void)
     init_usb();
     init_port_a();
     init_port_b();
-    init_port_d();
+    lights_init();
 
     // Arm EP2 to tell the host that we're ready to receive
     EP2BCL = 0x80;
@@ -102,10 +102,18 @@ void main(void)
 
         count = MAKEWORD(EP2BCH, EP2BCL);
 
-        if(count == 1) {
-            shift_out_byte(EP2FIFOBUF[0]);
+        if(count == 2) {
+            if(light_set_light(EP2FIFOBUF[0], EP2FIFOBUF[1])) {
+                goto success;
+            }
         }
 
+failure:
+        STALLEP0();
+        SYNCDELAY();
+        continue;
+
+success:
         EP2BCL=0x80; // Arms EP2
         SYNCDELAY();
     }
@@ -129,28 +137,36 @@ BOOL handle_vendorcommand(BYTE bRequest) {
 
     SUDPTRCTL = 1;
 
-    shift_out_byte(0x00);
+//    shift_out_byte(0x00);
     if(bmRequestType == 0xc0 && bRequest == 0x21) {
+//        shift_out_byte(0x01);
         light_set_descriptor = triac_get_light_set_descriptor();
+        SUDPTRCTL = 0;
+        SUDPTRH = MSB(light_set_descriptor);
+        SUDPTRL = LSB(light_set_descriptor);
         EP0BCH = 0;
         EP0BCL = sizeof(struct light_set_descriptor);
-        SUDPTRCTL = 0;
-        SUDPTRH = (BYTE)((((unsigned short)light_set_descriptor) >> 8) & 0xff);
-        SUDPTRL = (BYTE)(((unsigned short)light_set_descriptor) & 0xff);
-        shift_out_byte(0xf0);
     }
     else if(bmRequestType == 0xc0 && bRequest == 0x22) {
+//        shift_out_byte(0x02);
         light_set_descriptor = triac_get_light_set_descriptor();
         light_descriptors = triac_get_light_descriptors();
+        SUDPTRCTL = 0;
+        SUDPTRH = MSB(light_descriptors);
+        SUDPTRL = LSB(light_descriptors);
         EP0BCH = 0;
         EP0BCL = sizeof(struct light_descriptor) * light_set_descriptor->count;
-        SUDPTRCTL = 0;
-        SUDPTRH = (BYTE)((((unsigned short)light_descriptors) >> 8) & 0xff);
-        SUDPTRL = (BYTE)(((unsigned short)light_descriptors) & 0xff);
-        shift_out_byte(0xf0);
     }
     else {
-        shift_out_byte(0x0f);
+        /*
+        shift_out_byte(0xff);
+        delay(100);
+        shift_out_byte(0xff);
+        delay(100);
+        shift_out_byte(0xff);
+        delay(100);
+        shift_out_byte(0x00);
+        */
         return FALSE;
     }
 
