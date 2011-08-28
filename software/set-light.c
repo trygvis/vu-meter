@@ -5,12 +5,14 @@
 #include <assert.h>
 #include <string.h>
 
+static struct makers_party* makers_party;
+
 void usage(char* argv[]) {
 	fprintf(stderr, "Usage: %s [on|off]\n", argv[0]);
 }
 
 int main(int argc, char* argv[]) {
-	makers_party_alloc();
+	makers_party_alloc(&makers_party);
 
 	if(argc != 2) {
 		usage(argv);
@@ -21,10 +23,10 @@ int main(int argc, char* argv[]) {
 	printf("on=%s\n", on ? "true" : "false");
 
 	for(int i = 0; i < 8; i++) {
-		makers_party_set_light(i, on);
+		makers_party_set_light(makers_party, i, on);
 	}
 
-	makers_party_dealloc();
+	makers_party_dealloc(makers_party);
 
 	return EXIT_SUCCESS;
 }
