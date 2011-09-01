@@ -47,9 +47,9 @@ static void load_descriptors(struct makers_party* makers_party) {
 		(unsigned char *) light_set,
 		light_set_descriptor_size,
 		timeout);
-	printf("light_set_descriptor size=%d\n", result);
+	printf("result=%d, light_set_descriptor_size=%d\n", result, light_set_descriptor_size);
 	assert(result == light_set_descriptor_size);
-	printf("light_set_descriptor->count=%d\n", light_set->count);
+//	printf("light_set_descriptor->count=%d\n", light_set->count);
 
 	// Load all the light descriptors
 	struct light_descriptor* lights = malloc(sizeof(struct light_descriptor) * light_set->count);
@@ -65,8 +65,7 @@ static void load_descriptors(struct makers_party* makers_party) {
 		(unsigned char *)lights,
 		light_descriptor_size * light_set->count,
 		timeout);
-	printf("result=%d\n", result);
-	printf("result 2=%d\n", (light_descriptor_size * light_set->count));
+	printf("result=%d, light_descriptor_size * light_set->count=%d\n", result, (light_descriptor_size * light_set->count));
 	assert(result == (light_descriptor_size * light_set->count));
 
 	makers_party->light_set = light_set;
