@@ -123,8 +123,10 @@ void makers_party_dealloc(struct makers_party* makers_party) {
 
 	free(makers_party->lights);
 	free(makers_party->light_set);
-    libusb_release_interface(makers_party->handle, 0);
-    libusb_close(makers_party->handle);
+	if(makers_party->handle != NULL) {
+		libusb_release_interface(makers_party->handle, 0);
+		libusb_close(makers_party->handle);
+	}
 	if(makers_party->ctx != NULL) {
 		libusb_exit(makers_party->ctx);
 	}
